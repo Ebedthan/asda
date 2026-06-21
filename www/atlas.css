@@ -1,0 +1,377 @@
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap');
+
+/* ── Reset & base ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, .container-fluid {
+  height: 100%;
+  width:  100%;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  background: #0d1b12;
+}
+
+/* ── Full-screen map ── */
+#map {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  cursor: crosshair;   /* FIX: signals map is interactive */
+}
+
+/* ── Shared panel style ── */
+.float-panel {
+  position: fixed;
+  z-index: 500;
+  background: rgba(10, 22, 14, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(134, 196, 124, 0.18);
+  border-radius: 14px;
+  color: #e8f0e4;
+  padding: 18px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+}
+
+/* ── Header panel (top-left) ── */
+#panel-header {
+  top: 22px;
+  left: 22px;
+  width: 280px;
+  max-height: calc(100vh - 44px);
+  overflow-y: auto;
+}
+
+.atlas-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #b8dba8;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.atlas-subtitle {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: #7aaa6a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.panel-divider {
+  border: none;
+  border-top: 1px solid rgba(134, 196, 124, 0.15);
+  margin: 12px 0;
+}
+
+/* ── Layer controls ── */
+.control-label-custom {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #7aaa6a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Shiny/Bootstrap select override */
+.selectize-control .selectize-input,
+.form-control {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(134, 196, 124, 0.22) !important;
+  border-radius: 8px !important;
+  color: #e8f0e4 !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-size: 0.82rem !important;
+  padding: 7px 10px !important;
+  box-shadow: none !important;
+}
+.selectize-dropdown {
+  background: #0e1f11 !important;
+  border: 1px solid rgba(134, 196, 124, 0.2) !important;
+  border-radius: 8px !important;
+  color: #e8f0e4 !important;
+  font-size: 0.82rem !important;
+}
+.selectize-dropdown .option:hover,
+.selectize-dropdown .option.active {
+  background: rgba(134, 196, 124, 0.15) !important;
+  color: #b8dba8 !important;
+}
+
+/* Basemap radio buttons */
+.shiny-input-radiogroup label {
+  font-size: 0.8rem;
+  color: #c4d9be;
+  cursor: pointer;
+}
+.shiny-input-radiogroup .radio { margin-bottom: 4px; }
+.shiny-input-radiogroup input[type='radio'] { accent-color: #7aaa6a; }
+
+/* ── Cursor tooltip ── */
+/* FIX: new component - live diversity readout under cursor */
+.map-tooltip {
+  position: fixed;
+  z-index: 1000;
+  background: rgba(10, 22, 14, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(134, 196, 124, 0.25);
+  border-radius: 9px;
+  padding: 8px 12px;
+  pointer-events: none;          /* never intercepts mouse events */
+  min-width: 160px;
+  transition: opacity 0.1s ease;
+}
+
+.map-tooltip.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tooltip-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #7aaa6a;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 3px;
+}
+
+.tooltip-value {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #b8dba8;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.tooltip-coords {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: #5e8c55;
+  letter-spacing: 0.04em;
+}
+
+/* ── Results panel (bottom-right) ── */
+#panel-results {
+  bottom: 30px;
+  right: 22px;
+  width: 340px;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#panel-results.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
+.result-hint {
+  font-size: 0.78rem;
+  color: #6a9460;
+  font-style: italic;
+  text-align: center;
+  padding: 10px 0 4px;
+}
+
+.coords-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.74rem;        /* FIX: slightly larger */
+  color: #7aaa6a;
+  background: rgba(122, 170, 106, 0.1);
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin-bottom: 14px;
+  display: block;
+  letter-spacing: 0.04em;
+}
+
+/* ── Hill cards — 2×2 grid ── */
+.hill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.hill-card {
+  background: rgba(134, 196, 124, 0.08);
+  border: 1px solid rgba(134, 196, 124, 0.18);
+  border-radius: 10px;
+  padding: 12px 8px 10px;     /* FIX: more breathing room */
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.hill-card:hover { background: rgba(134, 196, 124, 0.14); }
+
+.hill-order {
+  font-size: 0.72rem;          /* FIX: up from 0.62 */
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #7aaa6a;
+  margin-bottom: 6px;
+}
+
+/* FIX: wrapper keeps value + uncertainty stacked cleanly */
+.hill-value-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.hill-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;          /* FIX: up from 1.45 */
+  font-weight: 600;
+  color: #b8dba8;
+  line-height: 1;
+}
+
+.hill-uncertainty {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;           /* FIX: up from 0.65 */
+  color: #5e8c55;
+  display: block;
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+
+.hill-label {
+  font-size: 0.68rem;          /* FIX: up from 0.60 */
+  color: #5e8c55;
+  margin-top: 5px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Legend panel (bottom-left) ── */
+#panel-legend {
+  bottom: 30px;
+  left: 22px;
+  width: 230px;                /* FIX: wider to prevent label truncation */
+  padding: 14px 16px;
+}
+
+.legend-title {
+  font-size: 0.67rem;
+  font-weight: 500;
+  color: #7aaa6a;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  white-space: normal;         /* FIX: allow title to wrap */
+  line-height: 1.35;
+}
+
+.legend-gradient {
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(to right, #1a3d24, #3d7a35, #7aaa6a, #b8dba8, #e8f5e0);
+  margin-bottom: 6px;
+}
+
+.legend-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.67rem;          /* FIX: slightly larger tick labels */
+  color: #6a9460;
+}
+
+/* ── Loading overlay ── */
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0d1b12;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  transition: opacity 0.6s ease;
+}
+
+#loading-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #b8dba8;
+  letter-spacing: 0.02em;
+}
+
+.loading-bar-wrap {
+  width: 220px;
+  height: 3px;
+  background: rgba(134,196,124,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 0%;
+  background: #7aaa6a;
+  border-radius: 2px;
+  animation: loadprogress 1.8s ease forwards;
+}
+
+@keyframes loadprogress {
+  0%   { width: 0%; }
+  60%  { width: 75%; }
+  100% { width: 100%; }
+}
+
+.loading-sub {
+  font-size: 0.72rem;
+  color: #5e8c55;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Leaflet overrides ── */
+/* FIX: push native zoom control down so it clears the header panel */
+.leaflet-top.leaflet-right .leaflet-control-zoom {
+  margin-top: 22px;
+  margin-right: 16px;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(10, 22, 14, 0.88) !important;
+  border-color: rgba(134, 196, 124, 0.2) !important;
+  color: #b8dba8 !important;
+  backdrop-filter: blur(8px);
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(134, 196, 124, 0.15) !important;
+  color: #e8f0e4 !important;
+}
+
+/* Attribution small and unobtrusive */
+.leaflet-control-attribution {
+  font-size: 0.6rem !important;
+  background: rgba(0,0,0,0.45) !important;
+  color: #5e8c55 !important;
+}
+
+.leaflet-control-attribution a { color: #7aaa6a !important; }
+
+/* Spinner */
+.shiny-spinner-output-container { min-height: 0 !important; }
