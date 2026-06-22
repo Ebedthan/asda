@@ -1,0 +1,12 @@
+name: sda
+title: sda
+username: ediman
+account: ediman
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019eeb8e-fcd4-7ba2-de24-6d5e9007471a
+bundleId:
+url: https://connect.posit.cloud/ediman/content/019eeb8e-fcd4-7ba2-de24-6d5e9007471a
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
